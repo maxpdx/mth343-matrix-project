@@ -3,13 +3,15 @@ from Matrix import *
 
 # reading matrices
 def read_matrices(file_path="input.dat"):
+    matrices = []
     f = open(file_path, "r")
+
     with f as file:
-        a_ = Matrix(parse(file.readline()))
-        b_ = Matrix(parse(file.readline()))
-        c_ = Matrix(parse(file.readline()))
+        for line in file:
+            matrices.append(Matrix(parse(line)))
+
     f.close()
-    return a_, b_, c_
+    return matrices
 
 
 # writing function
@@ -20,7 +22,6 @@ def write_matrices(matrices, file_path="output.dat"):
         f.write(str(matrix) + "\n")
 
     f.close()
-    return True
 
 
 # Parsing a str to a matrix
