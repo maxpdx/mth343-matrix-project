@@ -45,14 +45,14 @@ def parse(matrix_str):
 
 m = read_matrices("input.dat")
 
-m[0].display_matrix()
-m[0].display_sparse()
+m[0].display()
+m[0].to_array().display()
 print ""
-m[1].display_matrix()
-m[1].display_sparse()
+m[1].display()
+m[1].display()
 print ""
-m[2].display_matrix()
-m[2].display_sparse()
+m[2].display()
+m[2].to_array().display()
 
 m[0].add(m[1])
 
