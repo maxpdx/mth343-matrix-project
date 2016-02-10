@@ -38,21 +38,21 @@ def parse(matrix_str):
         # converting to ints
         values = row.split(",")
         for i, v in enumerate(values):
-            values[i] = int(v)
+            values[i] = float(v)
 
         matrix.append(values)
     return matrix
 
 m = read_matrices("input.dat")
 
-print m[0].get_matrix()
-print m[0].get_sparse()
-
-print m[1].get_matrix()
-print m[1].get_sparse()
-
-print m[2].get_matrix()
-print m[2].get_sparse()
+m[0].display_matrix()
+m[0].display_sparse()
+print ""
+m[1].display_matrix()
+m[1].display_sparse()
+print ""
+m[2].display_matrix()
+m[2].display_sparse()
 
 m[0].add(m[1])
 
