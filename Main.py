@@ -19,7 +19,11 @@ def write_matrices(matrices, file_path="output.dat"):
     f = open(file_path, "w")
 
     for matrix in matrices:
-        f.write(str(matrix) + "\n")
+        if isinstance(matrix, Matrix):
+            f.write(str(matrix.get_sparse())  + " \t===\t " +
+                    str(matrix.display(True)) + "\n")
+        else:
+            f.write(str(matrix) + "\n")
 
     f.close()
 
@@ -43,16 +47,14 @@ def parse(matrix_str):
         matrix.append(values)
     return matrix
 
+store = []
 m = read_matrices("input.dat")
 
 m[0].display()
-m[0].to_array().display()
 print ""
-m[1].display()
 m[1].display()
 print ""
 m[2].display()
-m[2].to_array().display()
 
 m[0].add(m[1])
 

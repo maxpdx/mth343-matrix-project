@@ -84,26 +84,23 @@ class Matrix:
             self.matrix = rows
         return self
 
-    def display(self,display_size=True):
+    def display(self,returns=False):
         if self.is_sparse():
-            self.display_sparse(display_size)
+            return self.display_sparse(returns)
         else:
-            self.display_matrix(display_size)
+            return self.display_matrix(returns)
 
     def display_size(self,string=""):
         print "%s %sx%s" % (string, self.rows(), self.cols())
 
-    def display_matrix(self,display_size=True):
-        if display_size:
-            self.display_size("Array: ")
+    def display_matrix(self,returns=True):
+        if returns:
+            return self.get_matrix()
+        else:
+            for row in self.get_matrix():
+                print row
 
-        for row in self.matrix:
-            print row
-
-    def display_sparse(self,display_size=True):
-        if display_size:
-            self.display_size("Sparse: ")
-
+    def display_sparse(self,returns=True):
         rows = []
         for i in range(0, self.rows()):
             row = []
@@ -121,11 +118,14 @@ class Matrix:
             j = self.c[x]
             rows[i][j] = val
 
-        for row in rows:
-            print row
+        if returns:
+            return rows
+        else:
+            for row in rows:
+                print row
 
 
-    def transpose(self, matrix):
+    def transpose(self):
         return self
 
     def add(self, matrix):
