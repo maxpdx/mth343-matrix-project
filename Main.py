@@ -43,17 +43,17 @@ def parse(matrix_str):
         matrix.append(values)
     return matrix
 
-(a, b, c) = read_matrices("input.dat")
+m = read_matrices("input.dat")
 
-print a.get_matrix()
-print a.get_sparse()
+print m[0].get_matrix()
+print m[0].get_sparse()
 
-print b.get_matrix()
-print b.get_sparse()
+print m[1].get_matrix()
+print m[1].get_sparse()
 
-print c.get_matrix()
-print c.get_sparse()
+print m[2].get_matrix()
+print m[2].get_sparse()
 
-# a.add(b)
+m[0].add(m[1])
 
-write_matrices([a.get_sparse(), b.get_sparse(), c.get_sparse()], "output.dat")
+write_matrices(m, "output.dat")
