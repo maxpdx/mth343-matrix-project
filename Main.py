@@ -1,6 +1,5 @@
 from Matrix import *
 
-
 # reading matrices
 def read_matrices(file_path="input.dat"):
     matrices = []
@@ -12,7 +11,6 @@ def read_matrices(file_path="input.dat"):
 
     f.close()
     return matrices
-
 
 # writing function
 def write_matrices(matrices, file_path="output.dat"):
@@ -26,7 +24,6 @@ def write_matrices(matrices, file_path="output.dat"):
             f.write(str(matrix) + "\n")
 
     f.close()
-
 
 # Parsing a str to a matrix
 def parse(matrix_str):
@@ -55,6 +52,6 @@ for x in m:
     x.display()
     print ""
 
-# m[0].add(m[1])
+m[0].add(m[1])
 
 write_matrices(m, "output.dat")
