@@ -50,12 +50,11 @@ def parse(matrix_str):
 store = []
 m = read_matrices("input.dat")
 
-m[0].display()
-print ""
-m[1].display()
-print ""
-m[2].display()
+for x in m:
+    x.display_size()
+    x.display()
+    print ""
 
-m[0].add(m[1])
+# m[0].add(m[1])
 
 write_matrices(m, "output.dat")
