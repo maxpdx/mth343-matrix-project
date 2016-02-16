@@ -140,7 +140,7 @@ class Matrix:
 
     # Prints the size of a matrix
     def display_size(self,string=""):
-        print "%s %sx%s" % (string, self.rows(), self.cols())
+        print("%s %sx%s" % (string, self.rows(), self.cols()))
 
     # displays the matrix of array of arrays
     def display_matrix(self,returns=True):
@@ -148,7 +148,7 @@ class Matrix:
             return self.get_matrix()
         else:
             for row in self.get_matrix():
-                print row
+                print(row)
 
     # display the matrix in a sparse format (replacing 0s with '_')
     # NOTE: comutation happens from a sparse matrix directly.
@@ -174,7 +174,7 @@ class Matrix:
             return rows
         else:
             for row in rows:
-                print row
+                print(row)
 
     # Transpose:
     # Returns:

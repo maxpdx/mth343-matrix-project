@@ -50,7 +50,7 @@ m = read_matrices("input.dat")
 for x in m:
     x.display_size()
     x.display()
-    print ""
+    print("")
 
 m[0].add(m[1])
 
