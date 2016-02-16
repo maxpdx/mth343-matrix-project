@@ -7,6 +7,8 @@ def read_matrices(file_path="input.dat"):
 
     with f as file:
         for line in file:
+            if line.startswith("#"):
+                continue
             matrices.append(Matrix(parse(line)))
 
     f.close()
