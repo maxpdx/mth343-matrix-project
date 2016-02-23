@@ -232,7 +232,7 @@ class Matrix:
             new_c.append(triple[1])
             new_v.append(triple[2])
         new_r.append(len(new_v))
-        
+
         self.r = new_r
         self.c = new_c
         self.v = new_v
@@ -248,8 +248,7 @@ class Matrix:
         if scalar == 0:
             raise Exception("Scalar number can't be '0'!")
 
-        for v in self.v:
-            v *= scalar
+        self.v = map(lambda x: x * scalar, self.v)
         return self
 
     def add(self, matrix):
