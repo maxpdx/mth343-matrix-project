@@ -275,7 +275,6 @@ class Matrix:
         :param matrix:
         :return:
         """
-        raise Exception("Not implemented")
         return self.subtract(matrix)
 
     def multiply(self, matrix):
@@ -293,7 +292,6 @@ class Matrix:
         :param matrix:
         :return: [Matrix] - self object
         """
-        raise Exception("Not implemented")
         return self.multiply(matrix)
 
     def divide(self, matrix):
@@ -311,6 +309,5 @@ class Matrix:
         :param matrix:
         :return:
         """
-        raise Exception("Not implemented")
         return self.divide(matrix)
 
