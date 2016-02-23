@@ -19,12 +19,13 @@ class Matrix:
     init_matrix = [] # stores the matrix in array of arrays of ints/floats
     r_ = []     # stores the row index of the value(self.v)
 
-
-    # Constructor: initializes variables, checks the type, converts to
-    # sparse matrix iff the input matrix is not a sparse matrix.
-    # Inputs:
-    #   matrix [list] - array of arrays of floats/ints
     def __init__(self, matrix):
+        """
+        Constructor: initializes variables, checks the type, converts to
+        sparse matrix iff the input matrix is not a sparse matrix.
+        :param matrix: [list] - array of arrays of floats/ints
+        :return:
+        """
         if isinstance(matrix, str):
             raise Exception("You passed a string into a matrix!")
 
@@ -33,10 +34,11 @@ class Matrix:
         if matrix and not self.isSparse:
             self.to_sparse()
 
-    # Clean Up: initializes lists of sparse storage to empty lists
-    # Returns:
-    #   self [Matrix] - in order to easily invoke next method
     def clean_up(self):
+        """
+        Clean Up: initializes lists of sparse storage to empty lists
+        :return: self [Matrix]
+        """
         self.r = []
         self.c = []
         self.v = []
@@ -45,39 +47,45 @@ class Matrix:
         self.r_ = []    # FOR TESTING ONLY
         return self
 
-    # Get Sparse:
-    # Returns: [list] of following lists:
-    #   self.r [list] - row pointer (points to an index of changing row value)
-    #   self.c [list] - column indexes of the values(self.v)
-    #   self.v [list] - list of plain matrix values
     def get_sparse(self):
+        """
+        Get Matrix in sparse form
+        :return: [list] of following lists:
+            self.r [list] - row pointer (points to an index of changing row value)
+            self.c [list] - column indexes of the values(self.v)
+            self.v [list] - list of plain matrix values
+        """
         return [self.r, self.c, self.v]
 
-    # Is Sparse: checks if the current instance of a Matrix class is already
-    #  stored in a sparse format
-    # Returns:
-    #   self.isSparse [Boolean] - is in sparse format? True or False
     def is_sparse(self):
+        """
+        Is Sparse: checks if the current instance of a Matrix class is
+        already stored in a sparse format
+        :return: [Boolean] - is in sparse format? True or False
+        """
         return self.isSparse
 
-    # Number of Rows: computes the number of rows in current matrix.
-    # Returns:
-    #   [Int] - number of rows
     def rows(self):
-        return len(self.r)
+        """
+        Number of Rows: computes the number of rows in current matrix.
+        :return: [Int] - number of rows
+        """
+        return len(self.r)-1
 
-    # Number of Columns: computes the number of cols in current matrix.
-    # Returns:
-    #   [Int] - number of cols
     def cols(self):
+        """
+        Number of Columns: computes the number of cols in current matrix.
+        :return: [Int] - number of cols
+        """
         return max(self.c)+1
 
-    # To Sparse: converts the array of arrays of ints/floats to sparse
-    # matrix and stores in needed data structure (list [r, c, v]). NOTE: make
-    # sure self.init_matrix is set before calling this method.
-    # Returns:
-    #   self [Matrix] - in order to easily invoke next method
     def to_sparse(self):
+        """
+        To Sparse: converts the array of arrays of ints/floats to sparse
+        matrix and stores in needed data structure (list [r, c, v]). NOTE:
+        make sure self.init_matrix is set before calling this method.
+        :return: [Matrix] - self object
+        """
         if not self.init_matrix:
             raise Exception("Nothing to convert to sparse matrix, "
                             "self.init_matrix = []")
@@ -93,15 +101,16 @@ class Matrix:
                         self.r_.append(n)
                         self.c.append(col)
                         self.v.append(val)
+            self.r.append(len(self.v))
             self.isSparse = True
-            # self.init_matrix = []     # FOR TESTING ONLY
         return self
 
-    # To Array: converts current sparse matrix to an array of arrays of
-    # ints/floats
-    # Returns:
-    #   self [Matrix] - in order to easily invoke next method
     def to_array(self):
+        """
+        To Array: converts current sparse matrix to an array of arrays of
+        ints/floats
+        :return: [Matrix] - self object
+        """
         if self.is_sparse():
             rows = []
             for i in range(0, self.rows()):
@@ -124,35 +133,56 @@ class Matrix:
             self.init_matrix = rows
         return self
 
-    # FOR TESTING ONLY
-    # Get Matrix: gets the initially entered matrix w/o any computations
-    # Returns:
-    #   self.init_matrix [list] - array of arrays of floats/ints
     def get_matrix(self):
+        """
+        FOR TESTING ONLY
+        Get Matrix: gets the initially entered matrix w/o any computations
+        :return: [list] - array of arrays of floats/ints
+        """
         return self.init_matrix
 
-    # Displays the matrix in whatever format it is
-    def display(self,returns=False):
+    def display(self, returns=False):
+        """
+        Displays the matrix in whatever format it is
+        :param returns:
+        :return:
+        """
         if self.is_sparse():
-            return self.display_sparse(returns)
+            matrix = self.display_sparse(returns)
         else:
-            return self.display_matrix(returns)
+            matrix = self.display_matrix(returns)
 
-    # Prints the size of a matrix
+        print()
+
+        return matrix
+
     def display_size(self,string=""):
+        """
+        Prints the size of a matrix
+        :param string:
+        :return:
+        """
         print("%s %sx%s" % (string, self.rows(), self.cols()))
 
-    # displays the matrix of array of arrays
-    def display_matrix(self,returns=True):
+    def display_matrix(self, returns=True):
+        """
+        Displays the matrix of array of arrays
+        :param returns:
+        :return:
+        """
         if returns:
             return self.get_matrix()
         else:
             for row in self.get_matrix():
                 print(row)
 
-    # display the matrix in a sparse format (replacing 0s with '_')
-    # NOTE: comutation happens from a sparse matrix directly.
-    def display_sparse(self,returns=True):
+    def display_sparse(self, returns=True):
+        """
+        Display the matrix in a sparse format (replacing 0s with '_')
+        NOTE: comutation happens from a sparse matrix directly.
+        :param returns:
+        :return:
+        """
         rows = []
         for i in range(0, self.rows()):
             row = []
@@ -176,39 +206,112 @@ class Matrix:
             for row in rows:
                 print(row)
 
-    # Transpose:
-    # Returns:
-    #   self [Matrix] - in order to easily invoke next method
     def transpose(self):
+        """
+        Takes transpose of a matrix
+        :return: [Matrix] - self object
+        """
+        current_row = 0
+        triples_list = []
+        new_r = []
+        new_c = []
+        new_v = []
+
+        for j, v in enumerate(self.v):
+            if j == self.r[current_row + 1]:
+                current_row += 1
+            triples_list.append((self.c[j], current_row, v))
+
+        triples_list = sorted(triples_list)
+
+        prev_r = -1
+        for triple in triples_list:
+            if prev_r != triple[0]:
+                prev_r = triple[0]
+                new_r.append(len(new_v))
+            new_c.append(triple[1])
+            new_v.append(triple[2])
+        new_r.append(len(new_v))
+        
+        self.r = new_r
+        self.c = new_c
+        self.v = new_v
+
         return self
 
-    # Add:
-    # Returns:
-    #   self [Matrix] - in order to easily invoke next method
+    def scalar(self, scalar=1.0):
+        """
+        Scalar - multiplies all values of a matrix to a scalar number
+        :param scalar: [float]
+        :return: [Matrix] - self object
+        """
+        if scalar == 0:
+            raise Exception("Scalar number can't be '0'!")
+
+        for v in self.v:
+            v *= scalar
+        return self
+
     def add(self, matrix):
+        """
+        Add
+        :param matrix:
+        :return: [Matrix] - self object
+        """
+        raise Exception("Not implemented")
         return self
 
-    # Subtract
-    # Returns:
-    #   self [Matrix] - in order to easily invoke next method
     def subtract(self, matrix):
+        """
+        Subtract
+        :param matrix:
+        :return: [Matrix] - self object
+        """
+        raise Exception("Not implemented")
         return self
-    def sub(self, matrix):  # Alias of function
+
+    def sub(self, matrix):
+        """
+        Alias of function
+        :param matrix:
+        :return:
+        """
+        raise Exception("Not implemented")
         return self.subtract(matrix)
 
-    # Multiply
-    # Returns:
-    #   self [Matrix] - in order to easily invoke next method
     def multiply(self, matrix):
+        """
+        Multiply
+        :param matrix:
+        :return: [Matrix] - self object
+        """
+        raise Exception("Not implemented")
         return self
-    def mul(self,matrix):  # Alias of function
+
+    def mul(self, matrix):
+        """
+        Alias of function
+        :param matrix:
+        :return: [Matrix] - self object
+        """
+        raise Exception("Not implemented")
         return self.multiply(matrix)
 
-    # Divide
-    # Returns:
-    #   self [Matrix] - in order to easily invoke next method
     def divide(self, matrix):
+        """
+        Divide
+        :param matrix:
+        :return: [Matrix] - self object
+        """
+        raise Exception("Not implemented")
         return self
-    def div(self,matrix):  # Alias of function
+
+    def div(self, matrix):
+        """
+        Alias of function
+        :param matrix:
+        :return:
+        """
+        raise Exception("Not implemented")
         return self.divide(matrix)
 
