@@ -416,17 +416,37 @@ class Matrix:
         """
         matrix = self._type_check(matrix)
 
-        if self.rows() != matrix.cols():
+        if self.cols() != matrix.rows():
             raise Exception("Wrong size matrix passed to multiply! "
                             "Should be MxN * NxR")
 
         a_tuple = self.csr2tuple()
         b_tuple = matrix.csr2tuple()
-        a_new = []
-        b_new = []
         result = []
 
-        
+        a_rows = {}
+        b_cols = {}
+        for i in range(0, self.rows()):
+            a_rows[i] = {}
+            for a in a_tuple:
+                if a[0] == i:
+                    a_rows[i][a[1]] = a[2]
+
+        for i in range(0, matrix.rows()):
+            b_cols[i] = {}
+            for b in b_tuple:
+                if b[1] == i:
+                    b_cols[i][b[0]] = b[2]
+
+        for row in a_rows:
+            for col in b_cols:
+                sum = 0
+                for i in range(0, max(self.rows(), matrix.rows())):
+                    if i in a_rows[row] and i in b_cols[col]:
+                        a = a_rows[row][i]
+                        b = b_cols[col][i]
+                        sum += a * b
+                        result.append((row, col, sum))
 
         result = sorted(result)
         self.r, self.c, self.v = self.tuple2csr(result)
