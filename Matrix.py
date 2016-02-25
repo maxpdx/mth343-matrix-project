@@ -206,37 +206,44 @@ class Matrix:
             for row in rows:
                 print(row)
 
-    def transpose(self):
-        """
-        Takes transpose of a matrix
-        :return: [Matrix] - self object
-        """
+    def _sp2triples(self):
         current_row = 0
         triples_list = []
-        new_r = []
-        new_c = []
-        new_v = []
-
         for j, v in enumerate(self.v):
             if j == self.r[current_row + 1]:
                 current_row += 1
-            triples_list.append((self.c[j], current_row, v))
+            triples_list.append((current_row, self.c[j], v))
+        return triples_list
 
-        triples_list = sorted(triples_list)
-
+    def _triples2sp(self, list):
+        new_r = []
+        new_c = []
+        new_v = []
         prev_r = -1
-        for triple in triples_list:
+        for triple in list:
             if prev_r != triple[0]:
                 prev_r = triple[0]
                 new_r.append(len(new_v))
             new_c.append(triple[1])
             new_v.append(triple[2])
         new_r.append(len(new_v))
+        return new_r, new_c, new_v
 
-        self.r = new_r
-        self.c = new_c
-        self.v = new_v
+    def transpose(self):
+        """
+        Takes transpose of a matrix
+        :return: [Matrix] - self object
+        """
+        triples = []
+        for triple in self._sp2triples():
+            # Making transpose: (x, y, v) => (y, x, v)
+            triples.append((triple[1], triple[0], triple[2]))
 
+        # Need to sort for 1st element in tuple(x) so we will be able to go
+        # back to sparse matrix by re-computing self.r (rows list)
+        triples = sorted(triples)
+
+        self.r, self.c, self.v = self._triples2sp(triples)
         return self
 
     def scalar(self, scalar=1.0):
@@ -251,13 +258,42 @@ class Matrix:
         self.v = map(lambda x: x * scalar, self.v)
         return self
 
+    def convert(self, matrix):
+        if isinstance(matrix, str):
+            raise Exception("You passed a string instead of a matrix!")
+        elif isinstance(matrix, list):
+            matrix = Matrix(matrix)
+
+        if not isinstance(matrix, Matrix):
+            raise Exception("Can't convert to a Matrix!")
+
+        return matrix
+
     def add(self, matrix):
         """
         Add
         :param matrix:
         :return: [Matrix] - self object
         """
-        raise Exception("Not implemented")
+        matrix = self.convert(matrix)
+
+        if self.rows() != matrix.rows() or self.cols() != matrix.cols():
+            raise Exception("Wrong size matrix passed to add!")
+
+        result = []
+        a_triple = self._sp2triples()
+        b_triple = matrix._sp2triples()
+
+        for triple in a_triple:
+            for v in b_triple:
+                if v[0] == triple[0] and v[1] == triple[1]:
+                    result.append((v[0], v[1], triple[2] + v[2]))
+                    b_triple.remove((v[0], v[1], v[2]))
+
+        result += b_triple
+        result = sorted(result)
+        self.r, self.c, self.v = self._triples2sp(result)
+
         return self
 
     def subtract(self, matrix):
