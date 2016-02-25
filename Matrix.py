@@ -180,14 +180,6 @@ class Matrix:
             text += str(row) + "\n"
         return text
 
-    def get_matrix(self):
-        """
-        FOR TESTING ONLY
-        Get Matrix: gets the initially entered matrix w/o any computations
-        :return: [list] - array of arrays of floats/ints
-        """
-        return self.init_matrix
-
     def display(self, text="", returns=False):
         """
         Displays the matrix in whatever format it is
@@ -195,39 +187,21 @@ class Matrix:
         :param returns:
         :return:
         """
-        if text:
-            print(text)
-
         if self.is_csr():
-            matrix = self.display_sparse(returns)
+            matrix = self.get_sparse_display()
         else:
-            matrix = self.display_matrix(returns)
+            matrix = self.init_matrix
 
-        print()
+        if not returns:
+            if text:
+                print(text)
+            for row in matrix:
+                print(row)
+            print()
 
         return matrix
 
-    def display_size(self,string=""):
-        """
-        Prints the size of a matrix
-        :param string:
-        :return:
-        """
-        print("%s %sx%s" % (string, self.rows(), self.cols()))
-
-    def display_matrix(self, returns=True):
-        """
-        Displays the matrix of array of arrays
-        :param returns:
-        :return:
-        """
-        if returns:
-            return self.get_matrix()
-        else:
-            for row in self.get_matrix():
-                print(row)
-
-    def display_sparse(self, returns=True):
+    def get_sparse_display(self):
         """
         Display the matrix in a sparse format (replacing 0s with '_')
         NOTE: comutation happens from a sparse matrix directly.
@@ -251,11 +225,7 @@ class Matrix:
             j = self.c[x]
             rows[i][j] = val
 
-        if returns:
-            return rows
-        else:
-            for row in rows:
-                print(row)
+        return rows
 
     def _type_check(self, matrix):
         """
