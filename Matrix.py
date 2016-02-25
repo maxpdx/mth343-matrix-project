@@ -345,26 +345,20 @@ class Matrix:
         b_copy = []
         result = []
 
-        # print(a_tuple)
-        # print(b_tuple)
-
         for a in a_tuple:
             a_copy.append(a)
             for b in b_tuple:
                 b_copy.append(b)
-                # print("%s ?= %s" % (a, b))
-                # print(b)
                 if a[0] == b[0] and a[1] == b[1]:
-                    # print("x")
                     result.append((b[0], b[1], a[2] + b[2]))
                     a_copy.remove(a)
                     b_copy.remove(b)
-            # print("----")
 
-        # print(a_tuple)
-        # print(b_tuple)
+        for a in a_copy:
+            result.append((a[0], a[1], a[2]))
+        for b in b_copy:
+            result.append((b[0], b[1], b[2]))
 
-        result += a_copy + b_copy
         result = sorted(result)
         self.r, self.c, self.v = self.triples2sp(result)
 
@@ -376,7 +370,34 @@ class Matrix:
         :param matrix:
         :return: [Matrix] - self object
         """
-        raise Exception("Not implemented")
+        matrix = self._type_check(matrix)
+
+        if self.rows() != matrix.rows() or self.cols() != matrix.cols():
+            raise Exception("Wrong size matrix passed to subtract!")
+
+        a_tuple = self.sp2triples()
+        b_tuple = matrix.sp2triples()
+        a_copy = []
+        b_copy = []
+        result = []
+
+        for a in a_tuple:
+            a_copy.append(a)
+            for b in b_tuple:
+                b_copy.append(b)
+                if a[0] == b[0] and a[1] == b[1]:
+                    result.append((b[0], b[1], a[2] - b[2]))
+                    a_copy.remove(a)
+                    b_copy.remove(b)
+
+        for a in a_copy:
+            result.append((a[0], a[1], -a[2]))
+        for b in b_copy:
+            result.append((b[0], b[1], -b[2]))
+
+        result = sorted(result)
+        self.r, self.c, self.v = self.triples2sp(result)
+
         return self
 
     def sub(self, matrix):
