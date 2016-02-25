@@ -276,7 +276,7 @@ class Matrix:
 
         return matrix
 
-    def sp2triples(self):
+    def csr2tuple(self):
         current_row = 0
         triples_list = []
         for j, v in enumerate(self.v):
@@ -285,7 +285,7 @@ class Matrix:
             triples_list.append((current_row, self.c[j], v))
         return triples_list
 
-    def triples2sp(self, list):
+    def tuple2csr(self, list):
         new_r = []
         new_c = []
         new_v = []
@@ -305,7 +305,7 @@ class Matrix:
         :return: [Matrix] - self object
         """
         triples = []
-        for triple in self.sp2triples():
+        for triple in self.csr2tuple():
             # Making transpose: (x, y, v) => (y, x, v)
             triples.append((triple[1], triple[0], triple[2]))
 
@@ -313,7 +313,7 @@ class Matrix:
         # back to sparse matrix by re-computing self.r (rows list)
         triples = sorted(triples)
 
-        self.r, self.c, self.v = self.triples2sp(triples)
+        self.r, self.c, self.v = self.tuple2csr(triples)
         return self
 
     def scalar(self, scalar=1.0):
@@ -339,28 +339,28 @@ class Matrix:
         if self.rows() != matrix.rows() or self.cols() != matrix.cols():
             raise Exception("Wrong size matrix passed to add!")
 
-        a_tuple = self.sp2triples()
-        b_tuple = matrix.sp2triples()
-        a_copy = []
-        b_copy = []
+        a_tuple = self.csr2tuple()
+        b_tuple = matrix.csr2tuple()
+        a_new = []
+        b_new = []
         result = []
 
         for a in a_tuple:
-            a_copy.append(a)
+            a_new.append(a)
             for b in b_tuple:
-                b_copy.append(b)
+                b_new.append(b)
                 if a[0] == b[0] and a[1] == b[1]:
                     result.append((b[0], b[1], a[2] + b[2]))
-                    a_copy.remove(a)
-                    b_copy.remove(b)
+                    a_new.remove(a)
+                    b_new.remove(b)
 
-        for a in a_copy:
+        for a in a_new:
             result.append((a[0], a[1], a[2]))
-        for b in b_copy:
+        for b in b_new:
             result.append((b[0], b[1], b[2]))
 
         result = sorted(result)
-        self.r, self.c, self.v = self.triples2sp(result)
+        self.r, self.c, self.v = self.tuple2csr(result)
 
         return self
 
@@ -375,28 +375,28 @@ class Matrix:
         if self.rows() != matrix.rows() or self.cols() != matrix.cols():
             raise Exception("Wrong size matrix passed to subtract!")
 
-        a_tuple = self.sp2triples()
-        b_tuple = matrix.sp2triples()
-        a_copy = []
-        b_copy = []
+        a_tuple = self.csr2tuple()
+        b_tuple = matrix.csr2tuple()
+        a_new = []
+        b_new = []
         result = []
 
         for a in a_tuple:
-            a_copy.append(a)
+            a_new.append(a)
             for b in b_tuple:
-                b_copy.append(b)
+                b_new.append(b)
                 if a[0] == b[0] and a[1] == b[1]:
                     result.append((b[0], b[1], a[2] - b[2]))
-                    a_copy.remove(a)
-                    b_copy.remove(b)
+                    a_new.remove(a)
+                    b_new.remove(b)
 
-        for a in a_copy:
+        for a in a_new:
             result.append((a[0], a[1], -a[2]))
-        for b in b_copy:
+        for b in b_new:
             result.append((b[0], b[1], -b[2]))
 
         result = sorted(result)
-        self.r, self.c, self.v = self.triples2sp(result)
+        self.r, self.c, self.v = self.tuple2csr(result)
 
         return self
 
@@ -414,7 +414,23 @@ class Matrix:
         :param matrix:
         :return: [Matrix] - self object
         """
-        raise Exception("Not implemented")
+        matrix = self._type_check(matrix)
+
+        if self.rows() != matrix.cols():
+            raise Exception("Wrong size matrix passed to multiply! "
+                            "Should be MxN * NxR")
+
+        a_tuple = self.csr2tuple()
+        b_tuple = matrix.csr2tuple()
+        a_new = []
+        b_new = []
+        result = []
+
+        
+
+        result = sorted(result)
+        self.r, self.c, self.v = self.tuple2csr(result)
+
         return self
 
     def mul(self, matrix):
