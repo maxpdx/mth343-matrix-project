@@ -1,9 +1,9 @@
 class Matrix:
     """
-    Matrix library that will store matrix in a 'Sparse' format and provides
-    methods to perform elementary matrix operations with this matrix in this
-    format. (This format aims to optimise memory usage, but increases
-    number of computations)
+    Matrix library that will store matrix in a CSR (Compressed Sparse Row)
+    format and provides methods to perform elementary matrix operations with
+    this matrix in this format. (This format aims to optimise memory usage,
+    but increases number of computations)
 
     WARNING: In current solution, matrix will ignore 'zero rows' and 'zero
     columns' in a matrix.
@@ -13,7 +13,7 @@ class Matrix:
     r = []      # row pointer (points to an index of changing row value)
     c = []      # stores the column index of the value(self.v)
     v = []      # stores a list of values
-    isSparse = False    # marks the current type of storage is sparse of not
+    isCSR = False    # marks the current type of storage is sparse of not
 
     # FOR TESTING while developing ONLY
     init_matrix = [] # stores the matrix in array of arrays of ints/floats
@@ -26,13 +26,24 @@ class Matrix:
         :param matrix: [list] - array of arrays of floats/ints
         :return:
         """
-        if isinstance(matrix, str):
-            raise Exception("You passed a string into a matrix!")
+        # copy matrix variables
+        if isinstance(matrix, Matrix):
+            self.r = matrix.r
+            self.c = matrix.c
+            self.v = matrix.v
+            self.isCSR = matrix.isCSR
+            # FOR TESTING ONLY
+            self.init_matrix = matrix.init_matrix
+            self.r_ = matrix.r_
+        # convert to Matrix
+        else:
+            if isinstance(matrix, str):
+                matrix = self.str2list(matrix)
 
-        self.clean_up()
-        self.init_matrix = matrix
-        if matrix and not self.isSparse:
-            self.to_sparse()
+            self.clean_up()
+            self.init_matrix = matrix
+            if matrix and not self.isCSR:
+                self.list2csr()
 
     def clean_up(self):
         """
@@ -42,7 +53,7 @@ class Matrix:
         self.r = []
         self.c = []
         self.v = []
-        self.isSparse = False
+        self.isCSR = False
 
         self.r_ = []    # FOR TESTING ONLY
         return self
@@ -57,13 +68,13 @@ class Matrix:
         """
         return [self.r, self.c, self.v]
 
-    def is_sparse(self):
+    def is_csr(self):
         """
         Is Sparse: checks if the current instance of a Matrix class is
         already stored in a sparse format
         :return: [Boolean] - is in sparse format? True or False
         """
-        return self.isSparse
+        return self.isCSR
 
     def rows(self):
         """
@@ -79,9 +90,9 @@ class Matrix:
         """
         return max(self.c)+1
 
-    def to_sparse(self):
+    def list2csr(self):
         """
-        To Sparse: converts the array of arrays of ints/floats to sparse
+        List To Sparse: converts the array of arrays of ints/floats to sparse
         matrix and stores in needed data structure (list [r, c, v]). NOTE:
         make sure self.init_matrix is set before calling this method.
         :return: [Matrix] - self object
@@ -90,7 +101,7 @@ class Matrix:
             raise Exception("Nothing to convert to sparse matrix, "
                             "self.init_matrix = []")
 
-        if not self.is_sparse():
+        if not self.is_csr():
             prev_r = -1
             for n, row in enumerate(self.init_matrix):
                 for col, val in enumerate(row):
@@ -102,16 +113,16 @@ class Matrix:
                         self.c.append(col)
                         self.v.append(val)
             self.r.append(len(self.v))
-            self.isSparse = True
+            self.isCSR = True
         return self
 
-    def to_array(self):
+    def csr2list(self):
         """
-        To Array: converts current sparse matrix to an array of arrays of
+        CSR To List: converts current sparse matrix to an array of arrays of
         ints/floats
         :return: [Matrix] - self object
         """
-        if self.is_sparse():
+        if self.is_csr():
             rows = []
             for i in range(0, self.rows()):
                 row = []
@@ -133,6 +144,42 @@ class Matrix:
             self.init_matrix = rows
         return self
 
+    @staticmethod
+    def str2list(matrix_str):
+        """
+        Converts a string into a list format which could be converted to Matrix
+        :param matrix_str: [str]
+        :return: [list]
+        """
+        matrix = []
+        matrix_str = matrix_str.replace(" ", "")
+        rows = matrix_str.split("],")
+        for row in rows:
+            row = row.replace("[", "")
+            row = row.replace("]", "")
+            row = row.replace("\r", "")
+            row = row.replace("\n", "")
+
+            # converting to floats
+            values = row.split(",")
+            for i, v in enumerate(values):
+                values[i] = float(v)
+
+            matrix.append(values)
+        return matrix
+
+    @staticmethod
+    def list2str(matrix_rows):
+        """
+        Converts a list into a string format
+        :param matrix_rows:
+        :return:
+        """
+        text = ""
+        for row in matrix_rows:
+            text += str(row) + "\n"
+        return text
+
     def get_matrix(self):
         """
         FOR TESTING ONLY
@@ -141,13 +188,17 @@ class Matrix:
         """
         return self.init_matrix
 
-    def display(self, returns=False):
+    def display(self, text="", returns=False):
         """
         Displays the matrix in whatever format it is
+        :param text: [string] any text that you want to display before matrix
         :param returns:
         :return:
         """
-        if self.is_sparse():
+        if text:
+            print(text)
+
+        if self.is_csr():
             matrix = self.display_sparse(returns)
         else:
             matrix = self.display_matrix(returns)
@@ -206,7 +257,26 @@ class Matrix:
             for row in rows:
                 print(row)
 
-    def _sp2triples(self):
+    def _type_check(self, matrix):
+        """
+        Converts given matrix in Matrix format.
+        :param matrix:  [str]
+                        [list]
+                        [matrix]
+        :return:
+        """
+        if isinstance(matrix, str):
+            matrix = self.str2list(matrix)
+        if isinstance(matrix, list):
+            matrix = Matrix(matrix)
+            matrix.display()
+
+        if not isinstance(matrix, Matrix):
+            raise Exception("Can't convert to a Matrix!")
+
+        return matrix
+
+    def sp2triples(self):
         current_row = 0
         triples_list = []
         for j, v in enumerate(self.v):
@@ -215,7 +285,7 @@ class Matrix:
             triples_list.append((current_row, self.c[j], v))
         return triples_list
 
-    def _triples2sp(self, list):
+    def triples2sp(self, list):
         new_r = []
         new_c = []
         new_v = []
@@ -235,7 +305,7 @@ class Matrix:
         :return: [Matrix] - self object
         """
         triples = []
-        for triple in self._sp2triples():
+        for triple in self.sp2triples():
             # Making transpose: (x, y, v) => (y, x, v)
             triples.append((triple[1], triple[0], triple[2]))
 
@@ -243,7 +313,7 @@ class Matrix:
         # back to sparse matrix by re-computing self.r (rows list)
         triples = sorted(triples)
 
-        self.r, self.c, self.v = self._triples2sp(triples)
+        self.r, self.c, self.v = self.triples2sp(triples)
         return self
 
     def scalar(self, scalar=1.0):
@@ -258,41 +328,45 @@ class Matrix:
         self.v = map(lambda x: x * scalar, self.v)
         return self
 
-    def convert(self, matrix):
-        if isinstance(matrix, str):
-            raise Exception("You passed a string instead of a matrix!")
-        elif isinstance(matrix, list):
-            matrix = Matrix(matrix)
-
-        if not isinstance(matrix, Matrix):
-            raise Exception("Can't convert to a Matrix!")
-
-        return matrix
-
     def add(self, matrix):
         """
         Add
         :param matrix:
         :return: [Matrix] - self object
         """
-        matrix = self.convert(matrix)
+        matrix = self._type_check(matrix)
 
         if self.rows() != matrix.rows() or self.cols() != matrix.cols():
             raise Exception("Wrong size matrix passed to add!")
 
+        a_tuple = self.sp2triples()
+        b_tuple = matrix.sp2triples()
+        a_copy = []
+        b_copy = []
         result = []
-        a_triple = self._sp2triples()
-        b_triple = matrix._sp2triples()
 
-        for triple in a_triple:
-            for v in b_triple:
-                if v[0] == triple[0] and v[1] == triple[1]:
-                    result.append((v[0], v[1], triple[2] + v[2]))
-                    b_triple.remove((v[0], v[1], v[2]))
+        # print(a_tuple)
+        # print(b_tuple)
 
-        result += b_triple
+        for a in a_tuple:
+            a_copy.append(a)
+            for b in b_tuple:
+                b_copy.append(b)
+                # print("%s ?= %s" % (a, b))
+                # print(b)
+                if a[0] == b[0] and a[1] == b[1]:
+                    # print("x")
+                    result.append((b[0], b[1], a[2] + b[2]))
+                    a_copy.remove(a)
+                    b_copy.remove(b)
+            # print("----")
+
+        # print(a_tuple)
+        # print(b_tuple)
+
+        result += a_copy + b_copy
         result = sorted(result)
-        self.r, self.c, self.v = self._triples2sp(result)
+        self.r, self.c, self.v = self.triples2sp(result)
 
         return self
 
