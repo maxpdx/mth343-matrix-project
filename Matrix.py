@@ -41,7 +41,7 @@ class Matrix:
     def copy(self):
         """
         Copies the object into a new one
-        :return: 
+        :return: [Matrix] a new instance copy of the current object
         """
         return copy.deepcopy(self)
 
@@ -195,8 +195,22 @@ class Matrix:
         if not returns:
             if text != "":
                 print(text)
+            c = 0
+            first = last = ""
             for row in matrix:
-                print("\t%s" % row)
+                c += 1
+
+                if c == 1:
+                    first = "["
+                else:
+                    first = " "
+
+                if c == len(matrix):
+                    last = " ]"
+                else:
+                    last = ","
+
+                print("%s%s%s" % (first, row, last))
             print()
 
         return matrix
