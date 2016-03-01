@@ -1,3 +1,5 @@
+import copy
+
 class Matrix:
     """
     Matrix library that will store matrix in a CSR (Compressed Sparse Row)
@@ -19,7 +21,7 @@ class Matrix:
     init_matrix = [] # stores the matrix in array of arrays of ints/floats
     r_ = []     # stores the row index of the value(self.v)
 
-    def __init__(self, matrix):
+    def __init__(self, matrix=None):
         """
         Constructor: initializes variables, checks the type, converts to
         sparse matrix iff the input matrix is not a sparse matrix.
@@ -27,16 +29,7 @@ class Matrix:
         :return:
         """
         # copy matrix variables
-        if isinstance(matrix, Matrix):
-            self.r = matrix.r
-            self.c = matrix.c
-            self.v = matrix.v
-            self.isCSR = matrix.isCSR
-            # FOR TESTING ONLY
-            self.init_matrix = matrix.init_matrix
-            self.r_ = matrix.r_
-        # convert to Matrix
-        else:
+        if matrix and not isinstance(matrix, Matrix):
             if isinstance(matrix, str):
                 matrix = self.str2list(matrix)
 
@@ -44,6 +37,13 @@ class Matrix:
             self.init_matrix = matrix
             if matrix and not self.isCSR:
                 self.list2csr()
+
+    def copy(self):
+        """
+        Copies the object into a new one
+        :return: 
+        """
+        return copy.deepcopy(self)
 
     def clean_up(self):
         """
@@ -193,10 +193,10 @@ class Matrix:
             matrix = self.init_matrix
 
         if not returns:
-            if text:
+            if text != "":
                 print(text)
             for row in matrix:
-                print(row)
+                print("\t%s" % row)
             print()
 
         return matrix
@@ -269,7 +269,6 @@ class Matrix:
         new_r.append(len(new_v))
         return new_r, new_c, new_v
 
-
     def transpose(self):
         """
         Takes transpose of a matrix
@@ -286,6 +285,21 @@ class Matrix:
 
         self.r, self.c, self.v = self.tuple2csr(reversed)
         return self
+
+    def is_symmetric(self):
+        """
+        Checks if the current Matrix object (is CSR format) is symmetric
+        :return: [bool] True or False
+        """
+        result = False
+
+        t = self.copy().transpose()
+
+        if self.r == t.r and self.c == t.c and self.v == t.v and\
+           self != t:  # Making sure we are not comparing the same object
+            result = True
+
+        return result
 
     def scalar(self, scalar=1.0):
         """
