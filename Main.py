@@ -7,7 +7,7 @@ def read_matrices(file_path="input.dat"):
 
     with f as file:
         for line in file:
-            if line.startswith("#"):
+            if line.startswith("#") or line.startswith("\n"):
                 continue
             matrices.append(Matrix(line))
 
@@ -27,14 +27,26 @@ def write_matrices(matrices, file_path="output.dat"):
 
     f.close()
 
-store = []
-m = read_matrices("input.dat")
+def testing():
+    m = read_matrices("input.dat")
 
-for x in m:
-    x.display_size()
-    x.display()
+    i = 0
+    for x in m:
+        x.display("m[%s]: %sx%s" % (i, x.rows(), x.cols()))
+        i += 1
 
-m[0].add(m[1])
-m[0].display("m[0] + m[1] = ")
+    print(" --- --- --- --- --- --- \n")
 
-write_matrices(m, "output.dat")
+    m[0].copy().transpose().display("m[0]^T = ")
+    m[1].copy().transpose().display("m[1]^T = ")
+    m[0].display("Is symmetric: " + str(m[0].is_symmetric()))
+    m[1].display("Is symmetric: " + str(m[1].is_symmetric()))
+    m[0].copy().add(m[1]).display("m[0] + m[1] = ")
+    m[0].copy().sub(m[1]).display("m[0] - m[1] = ")
+    m[0].copy().mul(m[1]).display("m[0] * m[1] = ")
+    m[1].copy().mul(m[0]).display("m[1] * m[0] = ")
+
+    write_matrices(m, "output.dat")
+    return m
+
+testing()

@@ -210,7 +210,7 @@ class Matrix:
                 else:
                     last = ","
 
-                print("%s%s%s" % (first, row, last))
+                print("\t%s%s%s" % (first, row, last))
             print()
 
         return matrix
