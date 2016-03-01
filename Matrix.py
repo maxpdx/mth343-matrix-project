@@ -28,7 +28,7 @@ class Matrix:
         :param matrix: [list] - array of arrays of floats/ints
         :return:
         """
-        # copy matrix variables
+
         if matrix and not isinstance(matrix, Matrix):
             if isinstance(matrix, str):
                 matrix = self.str2list(matrix)
@@ -37,6 +37,13 @@ class Matrix:
             self.init_matrix = matrix
             if matrix and not self.isCSR:
                 self.list2csr()
+
+    def set(self, r, c, v):
+        self.r = r
+        self.c = c
+        self.v = v
+        self.isCSR = True
+        return self
 
     def copy(self):
         """
@@ -195,8 +202,9 @@ class Matrix:
         if not returns:
             if text != "":
                 print(text)
+
             c = 0
-            first = last = ""
+
             for row in matrix:
                 c += 1
 
@@ -212,6 +220,8 @@ class Matrix:
 
                 print("\t%s%s%s" % (first, row, last))
             print()
+
+            return self
 
         return matrix
 
@@ -283,9 +293,10 @@ class Matrix:
         new_r.append(len(new_v))
         return new_r, new_c, new_v
 
-    def transpose(self):
+    def transpose(self, to_self=False):
         """
         Takes transpose of a matrix
+        :param to_self: [Boolean] if this operation should return a new object
         :return: [Matrix] - self object
         """
         reversed = []
@@ -295,10 +306,17 @@ class Matrix:
 
         # Need to sort for 1st element in tuple(x) so we will be able to go
         # back to sparse matrix by re-computing self.r (rows list)
-        reversed = sorted(reversed)
+        result = sorted(reversed)
 
-        self.r, self.c, self.v = self.tuple2csr(reversed)
-        return self
+        r, c, v = self.tuple2csr(result)
+
+        if to_self:
+            self.r, self.c, self.v = r, c, v
+            result = self
+        else:
+            result = Matrix().set(r, c, v)
+
+        return result
 
     def is_symmetric(self):
         """
@@ -307,7 +325,7 @@ class Matrix:
         """
         result = False
 
-        t = self.copy().transpose()
+        t = self.transpose()
 
         if self.r == t.r and self.c == t.c and self.v == t.v and\
            self != t:  # Making sure we are not comparing the same object
@@ -315,22 +333,31 @@ class Matrix:
 
         return result
 
-    def scalar(self, scalar=1.0):
+    def scalar(self, scalar=1.0, to_self=False):
         """
         Scalar - multiplies all values of a matrix to a scalar number
         :param scalar: [float]
+        :param to_self: [Boolean] if this operation should return a new object
         :return: [Matrix] - self object
         """
         if scalar == 0:
             print("!!! Exception: Scalar number can't be '0'!")
 
-        self.v = map(lambda x: x * scalar, self.v)
-        return self
+        if to_self:
+            self.v = map(lambda x: x * scalar, self.v)
+            result = self
+        else:
+            copy = self.copy()
+            copy.v = map(lambda x: x * scalar, copy.v)
+            result = copy
 
-    def add(self, matrix):
+        return result
+
+    def add(self, matrix, to_self=False):
         """
         Add
         :param matrix:
+        :param to_self: [Boolean] if this operation should return a new object
         :return: [Matrix] - self object
         """
         matrix = self._type_check(matrix)
@@ -359,14 +386,21 @@ class Matrix:
             result.append((b[0], b[1], b[2]))
 
         result = sorted(result)
-        self.r, self.c, self.v = self.tuple2csr(result)
+        r, c, v = self.tuple2csr(result)
 
-        return self
+        if to_self:
+            self.r, self.c, self.v = r, c, v
+            result = self
+        else:
+            result = Matrix().set(r, c, v)
 
-    def subtract(self, matrix):
+        return result
+
+    def subtract(self, matrix, to_self=False):
         """
         Subtract
         :param matrix:
+        :param to_self: [Boolean] if this operation should return a new object
         :return: [Matrix] - self object
         """
         matrix = self._type_check(matrix)
@@ -395,9 +429,15 @@ class Matrix:
             result.append((b[0], b[1], -b[2]))
 
         result = sorted(result)
-        self.r, self.c, self.v = self.tuple2csr(result)
+        r, c, v = self.tuple2csr(result)
 
-        return self
+        if to_self:
+            self.r, self.c, self.v = r, c, v
+            result = self
+        else:
+            result = Matrix().set(r, c, v)
+
+        return result
 
     def sub(self, matrix):
         """
@@ -407,10 +447,11 @@ class Matrix:
         """
         return self.subtract(matrix)
 
-    def multiply(self, matrix):
+    def multiply(self, matrix, to_self=False):
         """
         Multiply
         :param matrix:
+        :param to_self: [Boolean] if this operation should return a new object
         :return: [Matrix] - self object
         """
         matrix = self._type_check(matrix)
@@ -448,9 +489,15 @@ class Matrix:
                         result.append((row, col, sum))
 
         result = sorted(result)
-        self.r, self.c, self.v = self.tuple2csr(result)
+        r, c, v = self.tuple2csr(result)
 
-        return self
+        if to_self:
+            self.r, self.c, self.v = r, c, v
+            result = self
+        else:
+            result = Matrix().set(r, c, v)
+
+        return result
 
     def mul(self, matrix):
         """
@@ -476,4 +523,3 @@ class Matrix:
         :return:
         """
         return self.divide(matrix)
-
