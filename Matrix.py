@@ -490,6 +490,9 @@ class Matrix:
                         a = a_rows[row][i]
                         b = b_cols[col][i]
                         sum += a * b
+                        for item in result:
+                            if item[0] == row and item[1] == col:
+                                result.remove(item)
                         result.append((row, col, sum))
 
         result = sorted(result)
