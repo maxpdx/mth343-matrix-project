@@ -424,7 +424,7 @@ class Matrix:
                     b_new.remove(b)
 
         for a in a_new:
-            result.append((a[0], a[1], -a[2]))
+            result.append((a[0], a[1], a[2]))
         for b in b_new:
             result.append((b[0], b[1], -b[2]))
 
