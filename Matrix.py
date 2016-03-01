@@ -269,21 +269,22 @@ class Matrix:
         new_r.append(len(new_v))
         return new_r, new_c, new_v
 
+
     def transpose(self):
         """
         Takes transpose of a matrix
         :return: [Matrix] - self object
         """
-        triples = []
-        for triple in self.csr2tuple():
+        reversed = []
+        for tuple in self.csr2tuple():
             # Making transpose: (x, y, v) => (y, x, v)
-            triples.append((triple[1], triple[0], triple[2]))
+            reversed.append((tuple[1], tuple[0], tuple[2]))
 
         # Need to sort for 1st element in tuple(x) so we will be able to go
         # back to sparse matrix by re-computing self.r (rows list)
-        triples = sorted(triples)
+        reversed = sorted(reversed)
 
-        self.r, self.c, self.v = self.tuple2csr(triples)
+        self.r, self.c, self.v = self.tuple2csr(reversed)
         return self
 
     def scalar(self, scalar=1.0):
