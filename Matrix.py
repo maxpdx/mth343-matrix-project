@@ -377,8 +377,10 @@ class Matrix:
                 b_new.append(b)
                 if a[0] == b[0] and a[1] == b[1]:
                     result.append((b[0], b[1], a[2] + b[2]))
-                    a_new.remove(a)
-                    b_new.remove(b)
+                    if a in a_new:
+                        a_new.remove(a)
+                    if b in b_new:
+                        b_new.remove(b)
 
         for a in a_new:
             result.append((a[0], a[1], a[2]))
@@ -420,8 +422,10 @@ class Matrix:
                 b_new.append(b)
                 if a[0] == b[0] and a[1] == b[1]:
                     result.append((b[0], b[1], a[2] - b[2]))
-                    a_new.remove(a)
-                    b_new.remove(b)
+                    if a in a_new:
+                        a_new.remove(a)
+                    if b in b_new:
+                        b_new.remove(b)
 
         for a in a_new:
             result.append((a[0], a[1], a[2]))
