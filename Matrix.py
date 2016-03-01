@@ -98,7 +98,7 @@ class Matrix:
         :return: [Matrix] - self object
         """
         if not self.init_matrix:
-            raise Exception("Nothing to convert to sparse matrix, "
+            print("!!! Exception: Nothing to convert to sparse matrix, "
                             "self.init_matrix = []")
 
         if not self.is_csr():
@@ -256,7 +256,7 @@ class Matrix:
             matrix.display()
 
         if not isinstance(matrix, Matrix):
-            raise Exception("Can't convert to a Matrix!")
+            print("!!! Exception: Can't convert to a Matrix!")
 
         return matrix
 
@@ -322,7 +322,7 @@ class Matrix:
         :return: [Matrix] - self object
         """
         if scalar == 0:
-            raise Exception("Scalar number can't be '0'!")
+            print("!!! Exception: Scalar number can't be '0'!")
 
         self.v = map(lambda x: x * scalar, self.v)
         return self
@@ -336,7 +336,7 @@ class Matrix:
         matrix = self._type_check(matrix)
 
         if self.rows() != matrix.rows() or self.cols() != matrix.cols():
-            raise Exception("Wrong size matrix passed to add!")
+            print("!!! Exception: Wrong size matrix passed to add!")
 
         a_tuple = self.csr2tuple()
         b_tuple = matrix.csr2tuple()
@@ -372,7 +372,7 @@ class Matrix:
         matrix = self._type_check(matrix)
 
         if self.rows() != matrix.rows() or self.cols() != matrix.cols():
-            raise Exception("Wrong size matrix passed to subtract!")
+            print("!!! Exception: Wrong size matrix passed to subtract!")
 
         a_tuple = self.csr2tuple()
         b_tuple = matrix.csr2tuple()
@@ -416,7 +416,7 @@ class Matrix:
         matrix = self._type_check(matrix)
 
         if self.cols() != matrix.rows():
-            raise Exception("Wrong size matrix passed to multiply! "
+            print("!!! Exception: Wrong size matrix passed to multiply! "
                             "Should be MxN * NxR")
 
         a_tuple = self.csr2tuple()
@@ -466,7 +466,7 @@ class Matrix:
         :param matrix:
         :return: [Matrix] - self object
         """
-        raise Exception("Not implemented")
+        print("!!! Exception: Not implemented")
         return self
 
     def div(self, matrix):
