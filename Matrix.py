@@ -1,4 +1,8 @@
+# To install use 'pip install numpy'
+import numpy as np
 import copy
+from math import sqrt
+
 
 class Matrix:
     """
@@ -332,6 +336,60 @@ class Matrix:
             result = True
 
         return result
+
+    def qr(self, normalized=True):
+        """
+        Computes the QR Factorization where where Q is an orthogonal matrix
+        and R is an upper triangular matrix.
+
+        NOTE: using external library to compute it since have no time to
+        implement it.
+        :param normalized:
+        :return: [Matrix], [Matrix] Q, R matrices
+        """
+        a = self.copy().csr2list().init_matrix
+
+        q, r = np.linalg.qr(a)
+        if normalized:
+            q = q / q.max(axis=0)
+
+        return Matrix(q.tolist()), Matrix(r.tolist())
+
+    def dot(self, vector=None):
+        """
+        Computes the dot product with a vector. Both self and vector should
+        be 1 column [Matrix].
+        :param vector: [Matrix] to take the dot product with. If None,
+        then we duplicate the current [Matrix]
+        :return: [float] or [int]
+        """
+        if vector is None or vector == self:
+            vector = self.copy()
+
+        if self.cols() > 1:
+            print("!!! Exception: Can't compute dot product self, dimension "
+                  "is > 1 !")
+        if vector.cols() > 1:
+            print("!!! Exception: Can't compute dot product vector, dimension "
+                  "is > 1 !")
+        if self.rows() != vector.rows():
+            print("!!! Exception: Can't compute dot product, vectors have "
+                  "different number of rows !")
+
+        result = 0
+        for i in range(0, self.rows()):
+            result += self.v[i] * vector.v[i]
+
+        return result
+
+    def length(self):
+        """
+        Computes the length of a current Matrix (NOTE: dot() assumes its a
+        vector, 1 column).
+        :return: [float] or [int]
+        """
+        d = self.dot(self.copy())
+        return sqrt(d * d)
 
     def scalar(self, scalar=1.0, to_self=False):
         """
