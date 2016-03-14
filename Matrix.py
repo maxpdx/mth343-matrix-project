@@ -203,31 +203,32 @@ class Matrix:
         else:
             matrix = self.init_matrix
 
+        result = ""
+        if text != "":
+            result += text + "\n"
+
+        c = 0
+
+        for row in matrix:
+            c += 1
+
+            if c == 1:
+                first = "["
+            else:
+                first = " "
+
+            if c == len(matrix):
+                last = " ]"
+            else:
+                last = ","
+
+            result += str("\t%s%s%s\n" % (first, row, last))
+        result += "\n"
+
         if not returns:
-            if text != "":
-                print(text)
+            print(result)
 
-            c = 0
-
-            for row in matrix:
-                c += 1
-
-                if c == 1:
-                    first = "["
-                else:
-                    first = " "
-
-                if c == len(matrix):
-                    last = " ]"
-                else:
-                    last = ","
-
-                print("\t%s%s%s" % (first, row, last))
-            print()
-
-            return self
-
-        return matrix
+        return result
 
     def get_sparse_display(self):
         """
