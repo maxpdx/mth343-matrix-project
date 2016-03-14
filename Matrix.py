@@ -213,17 +213,11 @@ class Matrix:
         for row in matrix:
             c += 1
 
-            if c == 1:
-                first = "["
-            else:
-                first = " "
+            first = "[" if c == 1 else " "              # first row has '['
+            last = " ]" if c == len(matrix) else ","    # last row has ' ]'
 
-            if c == len(matrix):
-                last = " ]"
-            else:
-                last = ","
-
-            result += str("\t%s%s%s" % (first, row, last)) + nl
+            e = [float("%.2f" % x) if isinstance(x, float) else x for x in row]
+            result += str("\t%s%s%s" % (first, e, last)) + nl
 
         if not returns:
             print(result)
@@ -241,7 +235,7 @@ class Matrix:
         for i in range(0, self.rows()):
             row = []
             for j in range(0, self.cols()):
-                row.append("_")
+                row.append("__")
             rows.append(row)
 
         prev_i = i = 0
@@ -304,14 +298,14 @@ class Matrix:
         :param to_self: [Boolean] if this operation should return a new object
         :return: [Matrix] - self object
         """
-        reversed = []
-        for tuple in self.csr2tuple():
+        new_tuple = []
+        for a_tuple in self.csr2tuple():
             # Making transpose: (x, y, v) => (y, x, v)
-            reversed.append((tuple[1], tuple[0], tuple[2]))
+            new_tuple.append((a_tuple[1], a_tuple[0], a_tuple[2]))
 
         # Need to sort for 1st element in tuple(x) so we will be able to go
         # back to sparse matrix by re-computing self.r (rows list)
-        result = sorted(reversed)
+        result = sorted(new_tuple)
 
         r, c, v = self.tuple2csr(result)
 
@@ -413,13 +407,13 @@ class Matrix:
             print("!!! Exception: Scalar number can't be '0'!")
 
         if to_self:
-            self.v = map(lambda x: x * scalar, self.v)
+            self.v = [x*scalar for x in self.v]
             result = self
         else:
             matrix = self.copy()
-            matrix.v = map(lambda x: x * scalar, matrix.v)
+            matrix.v = [x*scalar for x in matrix.v]
             result = matrix
-        
+
         return result
 
     def scale(self, scalar=1.0, to_self=False):
