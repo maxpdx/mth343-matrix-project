@@ -224,7 +224,6 @@ class Matrix:
                 last = ","
 
             result += str("\t%s%s%s" % (first, row, last)) + nl
-        result += nl
 
         if not returns:
             print(result)
@@ -324,6 +323,9 @@ class Matrix:
 
         return result
 
+    def t(self, to_self=False):
+        return self.transpose(to_self)
+
     def is_symmetric(self):
         """
         Checks if the current Matrix object (is CSR format) is symmetric
@@ -331,7 +333,7 @@ class Matrix:
         """
         result = False
 
-        t = self.transpose()
+        t = self.t()
 
         if self.r == t.r and self.c == t.c and self.v == t.v and\
            self != t:  # Making sure we are not comparing the same object
@@ -414,11 +416,14 @@ class Matrix:
             self.v = map(lambda x: x * scalar, self.v)
             result = self
         else:
-            copy = self.copy()
-            copy.v = map(lambda x: x * scalar, copy.v)
-            result = copy
-
+            matrix = self.copy()
+            matrix.v = map(lambda x: x * scalar, matrix.v)
+            result = matrix
+        
         return result
+
+    def scale(self, scalar=1.0, to_self=False):
+        return self.scalar(scalar, to_self)
 
     def add(self, matrix, to_self=False):
         """
