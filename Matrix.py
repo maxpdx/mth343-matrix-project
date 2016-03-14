@@ -156,6 +156,51 @@ class Matrix:
         return self
 
     @staticmethod
+    def combine_vectors(vectors):
+        """
+        Combines list of vectors and outputs a new matrix
+        :param vectors: [list] of [Matrix] or [list]
+        :return: [Matrix]
+        """
+        prev_rows = vectors[0].rows()
+        new_tuples = []
+        j = 0
+        for vector in vectors:
+            if prev_rows != vector.rows():
+                print("!!! Exception: Can't combine vectors that are not "
+                      "the same dimension!")
+                return Matrix()
+
+            if isinstance(vector, Matrix):
+                tuples = vector.csr2tuple()
+            else:
+                tuples = vector.list2csr().csr2tuple()
+            print(tuples)
+            for tup in tuples:
+                new_tuples.append((tup[0], j, tup[2]))
+
+            j += 1
+
+        print(new_tuples)
+        new_tuples = sorted(new_tuples)
+        print(new_tuples)
+
+        r, c, v = Matrix.tuple2csr(new_tuples)
+
+        result = Matrix().set(r, c, v)
+
+        return result
+
+    @staticmethod
+    def combine(vectors):
+        """
+        Alias method for calling combine_vectors()
+        :param vectors:
+        :return:
+        """
+        return Matrix.combine_vectors(vectors)
+
+    @staticmethod
     def str2list(matrix_str):
         """
         Converts a string into a list format which could be converted to Matrix
@@ -278,7 +323,8 @@ class Matrix:
             triples_list.append((current_row, self.c[j], v))
         return triples_list
 
-    def tuple2csr(self, list):
+    @staticmethod
+    def tuple2csr(list):
         new_r = []
         new_c = []
         new_v = []
@@ -307,7 +353,7 @@ class Matrix:
         # back to sparse matrix by re-computing self.r (rows list)
         result = sorted(new_tuple)
 
-        r, c, v = self.tuple2csr(result)
+        r, c, v = Matrix.tuple2csr(result)
 
         if to_self:
             self.r, self.c, self.v = r, c, v
@@ -454,7 +500,7 @@ class Matrix:
             result.append((b[0], b[1], b[2]))
 
         result = sorted(result)
-        r, c, v = self.tuple2csr(result)
+        r, c, v = Matrix.tuple2csr(result)
 
         if to_self:
             self.r, self.c, self.v = r, c, v
@@ -497,7 +543,7 @@ class Matrix:
             result.append((b[0], b[1], -b[2]))
 
         result = sorted(result)
-        r, c, v = self.tuple2csr(result)
+        r, c, v = Matrix.tuple2csr(result)
 
         if to_self:
             self.r, self.c, self.v = r, c, v
@@ -560,7 +606,7 @@ class Matrix:
                         result.append((row, col, sum))
 
         result = sorted(result)
-        r, c, v = self.tuple2csr(result)
+        r, c, v = Matrix.tuple2csr(result)
 
         if to_self:
             self.r, self.c, self.v = r, c, v
