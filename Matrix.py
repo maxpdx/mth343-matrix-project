@@ -171,6 +171,11 @@ class Matrix:
                       "the same dimension!")
                 return Matrix()
 
+            if vector.cols() != 1:
+                print("!!! Exception: Can't combine matrices, try passing a "
+                      "vector")
+                return Matrix()
+
             if isinstance(vector, Matrix):
                 tuples = vector.csr2tuple()
             else:
