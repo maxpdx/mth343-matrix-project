@@ -191,11 +191,12 @@ class Matrix:
             text += str(row) + "\n"
         return text
 
-    def display(self, text="", returns=False):
+    def display(self, text="", returns=False, nl="\n"):
         """
         Displays the matrix in whatever format it is
         :param text: [string] any text that you want to display before matrix
-        :param returns:
+        :param returns: [boolean] Whether to print the matrix or return
+        :param nl: [string] new line tag. (cold be '\n', ' ', '|' or anything)
         :return:
         """
         if self.is_csr():
@@ -205,7 +206,7 @@ class Matrix:
 
         result = ""
         if text != "":
-            result += text + "\n"
+            result += text + nl
 
         c = 0
 
@@ -222,8 +223,8 @@ class Matrix:
             else:
                 last = ","
 
-            result += str("\t%s%s%s\n" % (first, row, last))
-        result += "\n"
+            result += str("\t%s%s%s" % (first, row, last)) + nl
+        result += nl
 
         if not returns:
             print(result)
@@ -379,6 +380,7 @@ class Matrix:
 
         result = 0
         for i in range(0, self.rows()):
+            print("%s: %sx%s" % (i, self.v[i], vector.v[i]))
             result += self.v[i] * vector.v[i]
 
         return result
@@ -391,6 +393,13 @@ class Matrix:
         """
         d = self.dot(self.copy())
         return sqrt(d * d)
+
+    def norm(self):
+        """
+        Alias function for computing length of a vector
+        :return: [float] or [int]
+        """
+        return self.length()
 
     def scalar(self, scalar=1.0, to_self=False):
         """
@@ -471,24 +480,22 @@ class Matrix:
 
         a_tuple = self.csr2tuple()
         b_tuple = matrix.csr2tuple()
-        a_new = []
-        b_new = []
         result = []
 
-        for a in a_tuple:
-            a_new.append(a)
-            for b in b_tuple:
-                b_new.append(b)
-                if a[0] == b[0] and a[1] == b[1]:
-                    result.append((b[0], b[1], a[2] - b[2]))
-                    if a in a_new:
-                        a_new.remove(a)
-                    if b in b_new:
-                        b_new.remove(b)
+        for i in range(0, self.rows()):
+            for j in range(0, self.cols()):
+                a = [x for x in a_tuple if x[0] == i and x[1] == j]
+                b = [x for x in b_tuple if x[0] == i and x[1] == j]
+                if a and b:
+                    a = a[0]
+                    b = b[0]
+                    result.append((i, j, a[2] - b[2]))
+                    a_tuple.remove(a)
+                    b_tuple.remove(b)
 
-        for a in a_new:
+        for a in a_tuple:
             result.append((a[0], a[1], a[2]))
-        for b in b_new:
+        for b in b_tuple:
             result.append((b[0], b[1], -b[2]))
 
         result = sorted(result)
