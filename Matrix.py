@@ -380,7 +380,6 @@ class Matrix:
 
         result = 0
         for i in range(0, self.rows()):
-            print("%s: %sx%s" % (i, self.v[i], vector.v[i]))
             result += self.v[i] * vector.v[i]
 
         return result
@@ -392,7 +391,7 @@ class Matrix:
         :return: [float] or [int]
         """
         d = self.dot(self.copy())
-        return sqrt(d * d)
+        return sqrt(d)
 
     def norm(self):
         """
