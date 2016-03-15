@@ -179,17 +179,14 @@ class Matrix:
             if isinstance(vector, Matrix):
                 tuples = vector.csr2tuple()
             else:
-                tuples = vector.list2csr().csr2tuple()
-            print(tuples)
+                tuples = Matrix(vector).csr2tuple()
+
             for tup in tuples:
                 new_tuples.append((tup[0], j, tup[2]))
 
             j += 1
 
-        print(new_tuples)
         new_tuples = sorted(new_tuples)
-        print(new_tuples)
-
         r, c, v = Matrix.tuple2csr(new_tuples)
 
         result = Matrix().set(r, c, v)
@@ -241,7 +238,7 @@ class Matrix:
             text += str(row) + "\n"
         return text
 
-    def display(self, text="", returns=False, nl="\n"):
+    def display(self, text="", returns=False, nl="\n", indent="\t"):
         """
         Displays the matrix in whatever format it is
         :param text: [string] any text that you want to display before matrix
@@ -267,7 +264,7 @@ class Matrix:
             last = " ]" if c == len(matrix) else ","    # last row has ' ]'
 
             e = [float("%.2f" % x) if isinstance(x, float) else x for x in row]
-            result += str("\t%s%s%s" % (first, e, last)) + nl
+            result += str("%s%s%s%s" % (indent, first, e, last)) + nl
 
         if not returns:
             print(result)
